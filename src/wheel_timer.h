@@ -21,7 +21,7 @@ class tw_timer
 {
     public:
         tw_timer(int rot, int ts)
-        : next(NULL), prev(NULL), rotation(rot), time_slot(ts){}
+        : next(NULL), prev(NULL), ratation(rot), time_slot(ts){}
     public:
         int ratation;                       // 记录定时器在时间轮转多少圈后生效
         int time_slot;                      // 记录定时器属于时间轮上那个槽(对应的链表)
@@ -110,7 +110,7 @@ class time_wheel
                 if (timer->next) {
                     timer->next->prev = timer->prev;
                 }
-                delete;
+                delete timer;
             }
         }
 
@@ -147,6 +147,7 @@ class time_wheel
                     }
                 }
             }
+            cur_slot = ++cur_slot % N;          // 更新时间轮的当前槽，以反映时间轮的转动
         }
     private:
         static const int N = 60;                // 时间轮上槽的数目
