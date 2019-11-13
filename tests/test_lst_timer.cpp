@@ -55,8 +55,6 @@ void cb_func(client_data* user_data) {
     printf("close fd %d \n", user_data->sockfd);
 }
 
-
-
 void test_lst_timer (const char* ip,int port) {
 
     int ret = 0;

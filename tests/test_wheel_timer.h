@@ -18,6 +18,6 @@
 #include <src/wheel_timer.h>
 
 
-void test_wheel_timer ();
+void test_wheel_timer (const char* ip, int port);
 
 #endif
