@@ -15,17 +15,17 @@ struct client_data
     sockaddr_in address;
     int sockfd;
     char buf[BUFFER_SIZE];
-    head_timer* timer;
+    heap_timer* timer;
 };
 
 // 定时器类
 class heap_timer 
 {
-    public:
-        head_timer(int delay)
-        {
-            expire = time(NULL) + delay;
-        }
+    // public:
+        // heap_timer(int delay)
+        // {
+        //     expire = time(NULL) + delay;
+        // }
     public:
         time_t expire;                      // 定时器生效的绝对时间
         void (*cb_func)(client_data*);      // 定时器的回调函数
@@ -100,12 +100,14 @@ class time_heap
             int hole = cur_size++;
             int parent = 0;
             // 对从空穴到根节点的路径上的所有节点执行上虑操作
+            // 由于新结点在最后，因此将继续上虑，以符合最小堆
             for (; hole > 0; hole = parent) {
                 parent = (hole - 1) / 2;
-                if (array[parent]->expire <= timer->expire) {
+                if (array[parent]->expire > timer->expire) {
+                    array[hole] = array[parent];
+                } else {
                     break;
                 }
-                array[hole] = array[parent];
             }
             array[hole] = timer;
         }
@@ -113,7 +115,7 @@ class time_heap
         // 删除目标定时器timer
         void del_timer(heap_timer* timer)
         {
-            id (!timer) return;
+            if (!timer) return;
 
             /**
              * 仅仅将目标定时器的回调函数设置为空，即所谓的延迟销毁
@@ -190,6 +192,26 @@ class time_heap
                 }
             }
             array[hole] = temp;
+        }
+
+        // 将堆数组容量扩大1倍
+        void resize() throw (std::exception)
+        {
+            heap_timer** temp = new heap_timer* [2 * capacity];
+            for (int i = 0; i < 2 * capacity; ++i) {
+                temp[i] = NULL;
+            }
+
+            if (!temp) {
+                throw std::exception();
+            }
+            
+            capacity = 2 * capacity;
+            for (int i = 0; i < cur_size; ++i) {
+                temp[i] = array[i];
+            }
+            delete [] array;
+            array = temp;
         }
     private:
         heap_timer** array;                 // 堆数组
